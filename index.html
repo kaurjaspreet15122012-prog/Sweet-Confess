@@ -3,108 +3,101 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💌 Sweet Confess</title>
-<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Baloo+2&display=swap" rel="stylesheet">
+<title>💌 Sweet Confess 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Pacifico&display=swap" rel="stylesheet">
 <style>
-/* ===== Global Styles ===== */
-* {box-sizing: border-box; margin: 0; padding: 0;}
 body {
   font-family: 'Baloo 2', cursive;
-  background: linear-gradient(135deg, #FFB6C1, #FFD700, #87CEFA);
-  min-height: 100vh;
+  background: linear-gradient(135deg, #FFD1DC, #FFDEE9, #FEE2FE);
+  margin: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 15px;
-  color: #333;
+  height: 100vh;
 }
 
-/* ===== Header ===== */
-h1 {
+/* Header */
+header {
+  background: #FF6EB4;
+  color: white;
+  padding: 15px;
+  font-size: 1.8em;
+  text-align: center;
   font-family: 'Pacifico', cursive;
-  color: #FF69B4;
-  text-shadow: 2px 2px #fff;
-  text-align: center;
-  margin-bottom: 15px;
-  font-size: 2em;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
-/* ===== Card / Form Styles ===== */
-.card {
-  background: #fff0f5;
-  width: 100%;
-  max-width: 500px;
-  padding: 15px;
-  margin-bottom: 20px;
-  border-radius: 25px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-  text-align: center;
-}
-
-textarea, input {
-  width: 90%;
+/* Chat container */
+#chatContainer {
+  flex: 1;
+  overflow-y: auto;
   padding: 10px;
-  margin: 10px 0;
-  border-radius: 15px;
-  border: 2px solid #FF69B4;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Chat bubbles */
+.confession-bubble {
+  max-width: 75%;
+  margin: 8px 0;
+  padding: 12px 18px;
+  border-radius: 25px;
+  background: #ffe4e1;
+  align-self: flex-start;
+  position: relative;
+  word-wrap: break-word;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
   font-size: 1em;
 }
 
-button {
-  background-color: #FF69B4;
-  color: #fff;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 25px;
-  font-size: 1.1em;
-  cursor: pointer;
-  transition: 0.3s;
-  margin-top: 5px;
+.confession-bubble.anonymous {
+  background: #fff0f5;
+  align-self: flex-end;
 }
 
-button:hover {
-  background-color: #ff85c1;
-}
-
-/* ===== Confession Cards ===== */
-.confession-list {
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  flex-direction: column;
-}
-
-.confession-card {
-  background: #fff8dc;
-  margin: 10px 0;
-  padding: 15px;
-  border-radius: 20px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-  position: relative;
-  transition: transform 0.2s;
-}
-
-.confession-card:hover {
-  transform: scale(1.03);
-}
-
-/* ===== Emoji Reactions ===== */
+/* Emoji reactions */
 .emoji-reactions {
-  margin-top: 10px;
-  font-size: 1.5em;
-}
-
-.emoji-reactions span {
+  font-size: 1.3em;
+  margin-top: 5px;
   cursor: pointer;
-  margin-right: 10px;
-  transition: transform 0.2s;
 }
 
 .emoji-reactions span:hover {
   transform: scale(1.3);
+  transition: 0.2s;
 }
 
-/* ===== Floating Hearts ===== */
+/* Input bar */
+#inputBar {
+  display: flex;
+  padding: 10px;
+  background: #ffe4e1;
+  border-top: 2px solid #FFB6C1;
+}
+
+#confessionInput {
+  flex: 1;
+  padding: 12px 15px;
+  border-radius: 25px;
+  border: 2px solid #FF6EB4;
+  margin-right: 10px;
+  font-size: 1em;
+}
+
+#sendBtn {
+  padding: 12px 20px;
+  border-radius: 25px;
+  border: none;
+  background: #FF6EB4;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+}
+
+#sendBtn:hover {
+  background: #ff85c1;
+}
+
+/* Floating hearts */
 .heart {
   position: absolute;
   font-size: 2em;
@@ -117,99 +110,61 @@ button:hover {
   100% {opacity:0; transform: translateY(-50px) scale(1.5);}
 }
 
-/* ===== Responsive ===== */
+/* Responsive */
 @media(max-width: 600px){
-  h1 {font-size: 1.7em;}
-  textarea, input {width: 95%;}
-  button {width: 90%;}
+  #confessionInput {flex: 1;}
+  header {font-size: 1.5em;}
 }
 </style>
 </head>
 <body>
 
-<h1>💌 Sweet Confess 💖</h1>
+<header>💌 Sweet Confess 💖</header>
 
-<!-- Confession Form -->
-<div class="card">
-  <textarea id="confessionInput" placeholder="Write your cute confession..."></textarea>
-  <br>
-  <button onclick="postConfession()">Send 💌</button>
+<div id="chatContainer"></div>
+
+<div id="inputBar">
+  <input type="text" id="confessionInput" placeholder="Write a cute confession..." />
+  <button id="sendBtn">💖 Send</button>
 </div>
-
-<!-- Confession Roulette -->
-<div class="card">
-  <h2>🎲 Confession Roulette</h2>
-  <button onclick="spinRoulette()">Spin!</button>
-  <p id="rouletteResult" style="margin-top:10px;"></p>
-</div>
-
-<!-- Mystery Crush Box -->
-<div class="card">
-  <h2>🎁 Mystery Crush Box</h2>
-  <button onclick="openMysteryBox()">Open Box</button>
-  <p id="mysteryResult" style="margin-top:10px;"></p>
-</div>
-
-<!-- Confession Feed -->
-<div class="confession-list" id="confessionList"></div>
 
 <script>
-// ===== Data =====
-let confessions = [];
-let points = 0;
+const chatContainer = document.getElementById('chatContainer');
+const input = document.getElementById('confessionInput');
+const sendBtn = document.getElementById('sendBtn');
 
-// ===== Post Confession =====
-function postConfession() {
-  const input = document.getElementById('confessionInput');
-  const text = input.value.trim();
-  if(!text) return alert("Please write something cute 💖");
-
-  const card = document.createElement('div');
-  card.className = 'confession-card';
-  card.innerHTML = `<p>${text}</p>
+function addConfession(text, anonymous=false){
+  const bubble = document.createElement('div');
+  bubble.className = 'confession-bubble' + (anonymous ? ' anonymous' : '');
+  bubble.innerHTML = `<p>${text}</p>
     <div class="emoji-reactions">
       <span onclick="addReaction(this,'❤️')">❤️</span>
-      <span onclick="addReaction(this,'😳')">😳</span>
-      <span onclick="addReaction(this,'😂')">😂</span>
+      <span onclick="addReaction(this,'💖')">💖</span>
+      <span onclick="addReaction(this,'✨')">✨</span>
     </div>`;
-  document.getElementById('confessionList').prepend(card);
-  confessions.push(text);
-  input.value='';
-  points++;
+  chatContainer.appendChild(bubble);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// ===== Emoji Reaction =====
-function addReaction(span, emoji) {
+// Send confession
+sendBtn.addEventListener('click', () => {
+  const text = input.value.trim();
+  if(!text) return;
+  addConfession(text, true); // anonymous confession
+  input.value = '';
+});
+
+// Floating hearts animation on emoji click
+function addReaction(span, emoji){
   const heart = document.createElement('span');
   heart.className = 'heart';
   heart.innerText = emoji;
-  heart.style.left = Math.random()*80+'%';
+  heart.style.left = span.getBoundingClientRect().left + 'px';
+  heart.style.top = span.getBoundingClientRect().top + 'px';
   document.body.appendChild(heart);
   setTimeout(()=>heart.remove(),2000);
-  points++;
 }
-
-// ===== Confession Roulette =====
-function spinRoulette() {
-  if(confessions.length===0) return alert("No confessions yet!");
-  const random = confessions[Math.floor(Math.random()*confessions.length)];
-  document.getElementById('rouletteResult').innerText = `🎉 Random Confession: "${random}"`;
-  points++;
-}
-
-// ===== Mystery Crush Box =====
-function openMysteryBox() {
-  const surprises = [
-    "💖 Someone loves you secretly!",
-    "😂 Your crush thinks you're funny!",
-    "😳 Mystery admirer spotted you!",
-    "🌟 You got a cute compliment!"
-  ];
-  const result = surprises[Math.floor(Math.random()*surprises.length)];
-  document.getElementById('mysteryResult').innerText=result;
-  points++;
-}
-
 </script>
+
 </body>
 </html>
