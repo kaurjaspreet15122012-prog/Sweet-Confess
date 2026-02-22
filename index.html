@@ -3,168 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>💌 Sweet Confess 💖</title>
+<title>💌 Sweet Confess Live 💖</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2&family=Pacifico&display=swap" rel="stylesheet">
 <style>
 body {
   font-family: 'Baloo 2', cursive;
-  background: linear-gradient(135deg, #FFD1DC, #FFDEE9, #FEE2FE);
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
+  background: linear-gradient(135deg,#FFD1DC,#FFDEE9,#FEE2FE);
+  margin:0; display:flex; flex-direction:column; height:100vh;
 }
-
-/* Header */
 header {
-  background: #FF6EB4;
-  color: white;
-  padding: 15px;
-  font-size: 1.8em;
-  text-align: center;
-  font-family: 'Pacifico', cursive;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  background:#FF6EB4; color:white; padding:15px; text-align:center; font-family:'Pacifico', cursive; font-size:1.8em;
 }
-
-/* Chat container */
 #chatContainer {
-  flex: 1;
-  overflow-y: auto;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
+  flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column;
 }
-
-/* Chat bubbles */
-.confession-bubble {
-  max-width: 75%;
-  margin: 8px 0;
-  padding: 12px 18px;
-  border-radius: 25px;
-  background: #ffe4e1;
-  align-self: flex-start;
-  position: relative;
-  word-wrap: break-word;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.15);
-  font-size: 1em;
+.message {
+  background:#fff0f5; border-radius:20px; padding:10px 15px; margin:5px 0; box-shadow:0 2px 5px rgba(0,0,0,0.15); max-width:75%;
 }
-
-.confession-bubble.anonymous {
-  background: #fff0f5;
-  align-self: flex-end;
-}
-
-/* Emoji reactions */
-.emoji-reactions {
-  font-size: 1.3em;
-  margin-top: 5px;
-  cursor: pointer;
-}
-
-.emoji-reactions span:hover {
-  transform: scale(1.3);
-  transition: 0.2s;
-}
-
-/* Input bar */
-#inputBar {
-  display: flex;
-  padding: 10px;
-  background: #ffe4e1;
-  border-top: 2px solid #FFB6C1;
-}
-
-#confessionInput {
-  flex: 1;
-  padding: 12px 15px;
-  border-radius: 25px;
-  border: 2px solid #FF6EB4;
-  margin-right: 10px;
-  font-size: 1em;
-}
-
-#sendBtn {
-  padding: 12px 20px;
-  border-radius: 25px;
-  border: none;
-  background: #FF6EB4;
-  color: white;
-  cursor: pointer;
-  font-size: 1em;
-}
-
-#sendBtn:hover {
-  background: #ff85c1;
-}
-
-/* Floating hearts */
-.heart {
-  position: absolute;
-  font-size: 2em;
-  color: #FF69B4;
-  animation: floatUp 2s ease-out forwards;
-}
-
-@keyframes floatUp {
-  0% {opacity:1; transform: translateY(0) scale(1);}
-  100% {opacity:0; transform: translateY(-50px) scale(1.5);}
-}
-
-/* Responsive */
-@media(max-width: 600px){
-  #confessionInput {flex: 1;}
-  header {font-size: 1.5em;}
-}
+#inputBar {display:flex; padding:10px; background:#ffe4e1; border-top:2px solid #FFB6C1;}
+#messageInput {flex:1; padding:12px 15px; border-radius:25px; border:2px solid #FF6EB4; margin-right:10px;}
+#sendBtn {padding:12px 20px; border-radius:25px; border:none; background:#FF6EB4; color:white; cursor:pointer;}
+#sendBtn:hover{background:#ff85c1;}
 </style>
 </head>
 <body>
 
-<header>💌 Sweet Confess 💖</header>
-
+<header>💌 Sweet Confess Live 💖</header>
 <div id="chatContainer"></div>
-
 <div id="inputBar">
-  <input type="text" id="confessionInput" placeholder="Write a cute confession..." />
+  <input type="text" id="messageInput" placeholder="Write your confession..." />
   <button id="sendBtn">💖 Send</button>
 </div>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-const chatContainer = document.getElementById('chatContainer');
-const input = document.getElementById('confessionInput');
-const sendBtn = document.getElementById('sendBtn');
+  // 🔑 YOUR FIREBASE CONFIG HERE
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "SENDER_ID",
+    appId: "APP_ID"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-function addConfession(text, anonymous=false){
-  const bubble = document.createElement('div');
-  bubble.className = 'confession-bubble' + (anonymous ? ' anonymous' : '');
-  bubble.innerHTML = `<p>${text}</p>
-    <div class="emoji-reactions">
-      <span onclick="addReaction(this,'❤️')">❤️</span>
-      <span onclick="addReaction(this,'💖')">💖</span>
-      <span onclick="addReaction(this,'✨')">✨</span>
-    </div>`;
-  chatContainer.appendChild(bubble);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
+  const chatContainer = document.getElementById('chatContainer');
+  const input = document.getElementById('messageInput');
+  const sendBtn = document.getElementById('sendBtn');
 
-// Send confession
-sendBtn.addEventListener('click', () => {
-  const text = input.value.trim();
-  if(!text) return;
-  addConfession(text, true); // anonymous confession
-  input.value = '';
-});
+  // Send message to Firebase
+  sendBtn.addEventListener('click', ()=>{
+    const text = input.value.trim();
+    if(!text) return;
+    db.ref('messages').push({text: text, timestamp: Date.now()});
+    input.value='';
+  });
 
-// Floating hearts animation on emoji click
-function addReaction(span, emoji){
-  const heart = document.createElement('span');
-  heart.className = 'heart';
-  heart.innerText = emoji;
-  heart.style.left = span.getBoundingClientRect().left + 'px';
-  heart.style.top = span.getBoundingClientRect().top + 'px';
-  document.body.appendChild(heart);
-  setTimeout(()=>heart.remove(),2000);
-}
+  // Listen for messages in real-time
+  db.ref('messages').on('child_added', (snapshot)=>{
+    const data = snapshot.val();
+    const msg = document.createElement('div');
+    msg.className='message';
+    msg.innerText = data.text;
+    chatContainer.appendChild(msg);
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+  });
 </script>
-
 </body>
 </html>
